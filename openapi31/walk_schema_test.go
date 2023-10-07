@@ -5,11 +5,11 @@ import (
 	"strconv"
 	"testing"
 
+	"github.com/STARRISEPH/openapi-go"
+	"github.com/STARRISEPH/openapi-go/openapi31"
 	"github.com/stretchr/testify/assert"
 	"github.com/swaggest/assertjson"
 	jsonschema "github.com/swaggest/jsonschema-go"
-	"github.com/swaggest/openapi-go"
-	"github.com/swaggest/openapi-go/openapi31"
 )
 
 func TestReflector_WalkRequestJSONSchemas(t *testing.T) {

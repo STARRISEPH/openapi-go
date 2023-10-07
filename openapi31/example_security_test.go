@@ -5,8 +5,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/swaggest/openapi-go"
-	"github.com/swaggest/openapi-go/openapi31"
+	"github.com/STARRISEPH/openapi-go"
+	"github.com/STARRISEPH/openapi-go/openapi31"
 )
 
 func ExampleSpec_SetHTTPBasicSecurity() {
