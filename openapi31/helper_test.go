@@ -4,9 +4,9 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/STARRISEPH/openapi-go/openapi31"
 	"github.com/stretchr/testify/assert"
 	"github.com/swaggest/assertjson"
-	"github.com/swaggest/openapi-go/openapi31"
 )
 
 func TestSpec_SetOperation(t *testing.T) {

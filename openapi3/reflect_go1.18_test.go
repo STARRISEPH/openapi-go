@@ -8,10 +8,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/STARRISEPH/openapi-go"
+	"github.com/STARRISEPH/openapi-go/openapi3"
 	"github.com/stretchr/testify/require"
 	"github.com/swaggest/assertjson"
-	"github.com/swaggest/openapi-go"
-	"github.com/swaggest/openapi-go/openapi3"
 )
 
 func Test_Foo(t *testing.T) {
