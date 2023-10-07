@@ -330,8 +330,9 @@ func (r *Reflector) parseRequestBody(
 	_, forceJSONRequestBody := input.(openapi.RequestJSONBodyEnforcer)
 
 	// GET, HEAD, DELETE and TRACE requests should not have body.
+	// Note: remove delete in the list because of design needs
 	switch httpMethod {
-	case http.MethodGet, http.MethodHead, http.MethodDelete, http.MethodTrace:
+	case http.MethodGet, http.MethodHead, http.MethodTrace:
 		if !forceRequestBody {
 			return nil
 		}
