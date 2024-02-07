@@ -243,24 +243,32 @@ func (r *Reflector) setupRequest(o *Operation, oc openapi.OperationContext) erro
 	for _, cu := range oc.Request() {
 		switch cu.ContentType {
 		case "":
-			if err := joinErrors(
-				r.parseRequestBody(o, oc, cu, mimeFormUrlencoded, oc.Method(), cu.FieldMapping(openapi.InFormData), tagFormData, tagForm),
-				r.parseParameters(o, oc, cu),
-				r.parseRequestBody(o, oc, cu, mimeJSON, oc.Method(), nil, tagJSON),
-			); err != nil {
-				return err
+			if strings.ToUpper(oc.Method()) == http.MethodGet {
+				if err := joinErrors(
+					r.parseParameters(o, oc, cu),
+				); err != nil {
+					return err
+				}
+			} else {
+				if err := joinErrors(
+					r.parseRequestBody(o, oc, cu, mimeFormUrlencoded, oc.Method(), cu.FieldMapping(openapi.InFormData), tagFormData),
+					r.parseNonQueryParameters(o, oc, cu),
+					r.parseRequestBody(o, oc, cu, mimeJSON, oc.Method(), nil, tagJSON),
+				); err != nil {
+					return err
+				}
 			}
 		case mimeJSON:
 			if err := joinErrors(
-				r.parseParameters(o, oc, cu),
+				r.parseNonQueryParameters(o, oc, cu),
 				r.parseRequestBody(o, oc, cu, mimeJSON, oc.Method(), nil, tagJSON),
 			); err != nil {
 				return err
 			}
 		case mimeFormUrlencoded, mimeMultipart:
 			if err := joinErrors(
-				r.parseRequestBody(o, oc, cu, mimeFormUrlencoded, oc.Method(), cu.FieldMapping(openapi.InFormData), tagFormData, tagForm),
-				r.parseParameters(o, oc, cu),
+				r.parseRequestBody(o, oc, cu, mimeFormUrlencoded, oc.Method(), cu.FieldMapping(openapi.InFormData), tagFormData),
+				r.parseNonQueryParameters(o, oc, cu),
 			); err != nil {
 				return err
 			}
@@ -354,7 +362,7 @@ func (r *Reflector) parseRequestBody(
 
 	// If `formData` is defined on a request body `json` is ignored.
 	if tag == tagJSON &&
-		(refl.HasTaggedFields(input, tagFormData) || refl.HasTaggedFields(input, tagForm)) &&
+		refl.HasTaggedFields(input, tagFormData) &&
 		!forceJSONRequestBody {
 		return nil
 	}
@@ -455,7 +463,11 @@ const (
 )
 
 func (r *Reflector) parseParameters(o *Operation, oc openapi.OperationContext, cu openapi.ContentUnit) error {
-	return joinErrors(r.parseParametersIn(o, oc, cu, openapi.InQuery, tagForm),
+	return joinErrors(r.parseParametersIn(o, oc, cu, openapi.InQuery, tagForm), r.parseNonQueryParameters(o, oc, cu))
+}
+
+func (r *Reflector) parseNonQueryParameters(o *Operation, oc openapi.OperationContext, cu openapi.ContentUnit) error {
+	return joinErrors(
 		r.parseParametersIn(o, oc, cu, openapi.InPath),
 		r.parseParametersIn(o, oc, cu, openapi.InCookie),
 		r.parseParametersIn(o, oc, cu, openapi.InHeader),
