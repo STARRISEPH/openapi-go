@@ -191,9 +191,9 @@ func (r *Reflector) setupRequest(o *Operation, oc openapi.OperationContext) erro
 		switch cu.ContentType {
 		case "":
 			if err := joinErrors(
+				r.parseRequestBody(o, oc, cu, mimeJSON, oc.Method(), nil, tagJSON),
 				r.parseRequestBody(o, oc, cu, mimeFormUrlencoded, oc.Method(), cu.FieldMapping(openapi.InFormData), tagFormData, tagForm),
 				r.parseParameters(o, oc, cu),
-				r.parseRequestBody(o, oc, cu, mimeJSON, oc.Method(), nil, tagJSON),
 			); err != nil {
 				return err
 			}
